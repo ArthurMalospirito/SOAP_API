@@ -32,6 +32,8 @@ async def app_exception_handler(request, exc:AppException):
 http_bearer_access = HTTPBearer(description="Access Token")
 http_bearer_refresh = HTTPBearer(description="Refresh Token")
 
-from routes import auth_router
+from routes import auth_router, event_router,category_router
 
 app.include_router(auth_router)
+app.include_router(event_router)
+app.include_router(category_router)

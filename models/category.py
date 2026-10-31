@@ -11,3 +11,9 @@ class Category(Base):
     priority:Mapped[int]= mapped_column(nullable=False,default=0)
     color: Mapped[str] = mapped_column(String(16),nullable=False,default="#FFFFFF")
 
+    def __init__(self,name:str,description:str,priority:int,color:str):
+        self.name=name
+        self.description=description
+        self.priority=priority
+        self.color=color
+
