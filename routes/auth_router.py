@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends
-from fastapi.security import OAuth2PasswordRequestForm
-from dependencies import get_session, create_jwt, get_refresh_user,get_current_user
+from dependencies import get_session, create_jwt, get_refresh_user
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
@@ -27,15 +26,15 @@ async def create_account(user_create_schema:UserCreateSchema, session:AsyncSessi
     await session.refresh(new_user)
     access_token = create_jwt(new_user.id)
     refresh_token = create_jwt(new_user.id,token_type="refresh")
-    return {
-        "success":True,
-        "message":"Usuário criado com sucesso.",
-        "data": {
+    return SuccessResponse(
+        success=True,
+        message="Usuário criado com sucesso.",
+        data= {
             "access_token": access_token,
             "refresh_token": refresh_token,
             "token_type": "Bearer"
         }
-    }
+    )
 
 
 @auth_router.post("/login",response_model=SuccessResponse,status_code=200)
@@ -48,24 +47,24 @@ async def login(user_login_schema:UserLoginSchema,session:AsyncSession = Depends
         raise AppException(status_code=401,message="Email ou senha incorretos")
     access_token = create_jwt(user.id)
     refresh_token = create_jwt(user.id,token_type="refresh")
-    return {
-        "success": True,
-        "message": "Login Efetudado com sucesso.",
-        "data": {
+    return SuccessResponse(
+        success= True,
+        message= "Login Efetudado com sucesso.",
+        data= {
             "access_token": access_token,
             "refresh_token": refresh_token,
             "token_type": "Bearer"
         }
-    }
+    )
     
 @auth_router.get("/refresh",response_model=SuccessResponse,status_code=200)
 async def use_refresh_token(user:User=Depends(get_refresh_user)):
     access_token = create_jwt(user.id)
-    return {
-        "success": True,
-        "message": "Token recarregado com sucesso",
-        "data": {
+    return SuccessResponse(
+        success= True,
+        message= "Token recarregado com sucesso",
+        data= {
             "access_token": access_token,
             "token_type": "Bearer"
         }
-    }
+    )

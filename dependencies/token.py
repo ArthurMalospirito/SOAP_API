@@ -27,7 +27,6 @@ def create_jwt(user_id:int,token_type:str="access"):
     return token
 
 async def verify_jwt(token:str,session:AsyncSession, expected_type:str="access") -> User:
-    """Valida o JWT e retorna o usuário do Token"""
     try:
         payload = jwt.decode(token,SECRET_KEY,algorithms=[ALGORITHM])
         user_id = int(payload.get("sub"))
@@ -48,7 +47,6 @@ async def get_current_user(
     credentials:HTTPAuthorizationCredentials=Depends(http_bearer_access),
     session: AsyncSession = Depends(get_session)
 ) -> User:
-    """Para rotas que precisam de Access Token"""
     return await verify_jwt(credentials.credentials, session, expected_type="access")
 
 
@@ -56,5 +54,4 @@ async def get_refresh_user(
     credentials:HTTPAuthorizationCredentials=Depends(http_bearer_refresh),
     session: AsyncSession = Depends(get_session)
 ) -> User:
-    """Para rotas que precisam de Refresh Token"""
     return await verify_jwt(credentials.credentials, session, expected_type="refresh")
